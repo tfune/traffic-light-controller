@@ -22,9 +22,11 @@ Two buttons provide user interaction:
 [Watch on YouTube](https://youtu.be/WH35ogzfD9o)
 
 **Circuit Layout:**
+
 ![Circuit Layout](media/circuit_layout.jpg)
 
 **Circuit Layout (Close-Up)**
+
 ![Circuit Layout Close-Up](media/circuit_layout_close_up.jpg)
 
 ## Features
@@ -62,7 +64,7 @@ Two buttons provide user interaction:
 | **East–West #1** | Red: 34, Yellow: 36, Green: 38 |
 | **East–West #2** | Red: 40, Yellow: 42, Green: 44 |
 | **Pedestrian LED** | 46 |
-| **Pedestrian Button** | A1 |
+| **Pedestrian Button** | 49 |
 | **Emergency Button (Interrupt)** | 2 |
 
 ---
