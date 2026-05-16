@@ -1,22 +1,19 @@
 ﻿# Arduino Traffic Light Controller
 
-A four-way **traffic light control system** built on the **Arduino Mega 2560**, featuring **pedestrian crossing** and **emergency override** modes.  
-This project simulates real-world intersection logic using a **finite state machine (FSM)** with **non-blocking timing**, making it an excellent demonstration of **embedded systems design**.
+An embedded traffic light control system built on an Arduino Mega 2560 using a finite state machine architecture, interrupt-driven emergency handling, and non-blocking real-time timing logic.
+
+This project was developed to demonstrate core embedded systems concepts including:
+
+* finite state machines (FSM)
+* real-time embedded control
+* interrupt service routines (ISR)
+* non-blocking timing
+* input debouncing
+* hardware/software integration
 
 ---
 
-## Overview
-
-This project models a real intersection with four traffic light heads (North–South and East–West), each having red, yellow, and green LEDs.  
-The system cycles through light phases using precise, non-blocking timing with the Arduino `millis()` function — no `delay()` calls are used, allowing the controller to remain responsive to inputs at all times.
-
-Two buttons provide user interaction:
-- **Pedestrian button:** Requests a safe crossing phase, indicated by a **white pedestrian LED**.
-- **Emergency button:** Triggers a flashing all-red mode to simulate emergency vehicle passage.
-
----
-
-## Demo & Media
+# Demo & Media
 
 **Demo Video:**
 [Watch on YouTube](https://youtu.be/WH35ogzfD9o)
@@ -29,86 +26,178 @@ Two buttons provide user interaction:
 
 ![Circuit Layout Close-Up](media/circuit_layout_close_up.jpg)
 
-## Features
+# Features
 
-- Four-way traffic light simulation (12 LEDs total)  
-- Non-blocking timing using `millis()`  
-- Finite State Machine (FSM) for clean logic flow  
-- Interrupt-driven emergency mode (instant response)  
-- Software-debounced pedestrian input  
-- Dedicated pedestrian LED indicator  
-- Modular design for easy hardware or logic expansion  
-
----
-
-## Hardware Used
-
-| Component | Quantity | Description |
-|------------|-----------|-------------|
-| Arduino Mega 2560 | 1 | Main controller board |
-| Breadboards | 2 | Interconnected for four signal heads |
-| LEDs | 13 | 12 for traffic lights (4× red/yellow/green) + 1 for pedestrian signal |
-| Resistors | 13 | 330–470Ω per LED |
-| Push Buttons | 2 | Pedestrian request & emergency mode |
-| Jumper Wires | — | For all connections |
-| USB Cable | 1 | For uploading and power |
+* Finite state machine traffic control architecture
+* Non-blocking timing using `millis()`
+* Four-way intersection light sequencing
+* Interrupt-driven emergency override mode
+* Software-debounced pedestrian crossing input
+* Dedicated pedestrian crossing indicator
+* Real-time asynchronous input handling
+* Modular and expandable embedded design
 
 ---
 
-## Pin Mapping
+# Hardware Used
+
+| Component | Description |
+| --- | --- |
+| Microcontroller | Arduino Mega 2560 |
+| LEDs | 12 traffic signal LEDs |
+| Pedestrian Indicator | White LED |
+| Buttons | Pedestrian and emergency inputs |
+| Breadboards | Dual breadboard layout |
+| Resistors | Current limiting for LEDs |
+| Wiring | Jumper wire interconnects |
+
+---
+
+# System Architecture
+
+```text
+TrafficLightController
+├── Traffic State Logic
+├── Pedestrian Input Handling
+├── Emergency Interrupt Handling
+└── LED Output Control
+```
+
+## Module Responsibilities
+
+### Traffic State Logic
+
+* controls intersection sequencing
+* manages FSM state transitions
+* handles non-blocking timing logic
+
+### Pedestrian Input Handling
+
+* monitors crossing requests
+* applies software debouncing
+* triggers pedestrian crossing phase
+
+### Emergency Interrupt Handling
+
+* interrupt-driven emergency detection
+* forces flashing all-red operation
+* overrides normal traffic sequencing
+
+### LED Output Control
+
+* controls all signal outputs
+* synchronizes intersection states
+* manages pedestrian indicator LED
+
+---
+
+# State Machine
+
+```text
+NORTH_SOUTH_GREEN
+↓
+NORTH_SOUTH_YELLOW
+↓
+ALL_RED
+↓
+EAST_WEST_GREEN
+↓
+EAST_WEST_YELLOW
+↓
+ALL_RED
+
+PEDESTRIAN and EMERGENCY modes accessible asynchronously
+```
+
+## State Summary
+
+* **NORTH_SOUTH_GREEN** → north/south traffic flows
+* **NORTH_SOUTH_YELLOW** → transition warning phase
+* **ALL_RED** → intersection safety buffer
+* **EAST_WEST_GREEN** → east/west traffic flows
+* **EAST_WEST_YELLOW** → transition warning phase
+* **PEDESTRIAN MODE** → activates pedestrian crossing indicator
+* **EMERGENCY MODE** → flashing all-red override state
+
+---
+
+# Embedded Concepts Demonstrated
+
+* Finite state machines
+* Interrupt service routines
+* Non-blocking embedded timing
+* Software debouncing
+* Real-time event handling
+* Embedded GPIO control
+* Modular firmware architecture
+* Hardware/software integration
+
+---
+
+# Real-Time Timing
+
+The controller uses the Arduino `millis()` timer for non-blocking operation rather than `delay()` calls.
+
+This allows the system to:
+
+* remain responsive to emergency interrupts
+* process pedestrian requests asynchronously
+* maintain deterministic state transitions
+
+Example timing logic:
+
+```cpp
+if(currentMillis - previousMillis >= interval)
+```
+
+---
+
+# Interrupt-Driven Emergency Mode
+
+Emergency mode is triggered using a hardware interrupt for immediate response.
+
+When activated:
+
+* normal traffic sequencing is suspended
+* all directions enter flashing red operation
+* the system remains in emergency mode until cleared
+
+---
+
+# Pin Mapping
 
 | Function | Pins |
-|-----------|------|
-| **North–South #1** | Red: 22, Yellow: 24, Green: 26 |
-| **North–South #2** | Red: 28, Yellow: 30, Green: 32 |
-| **East–West #1** | Red: 34, Yellow: 36, Green: 38 |
-| **East–West #2** | Red: 40, Yellow: 42, Green: 44 |
-| **Pedestrian LED** | 46 |
-| **Pedestrian Button** | 49 |
-| **Emergency Button (Interrupt)** | 2 |
+| --- | --- |
+| North–South #1 | 22, 24, 26 |
+| North–South #2 | 28, 30, 32 |
+| East–West #1 | 34, 36, 38 |
+| East–West #2 | 40, 42, 44 |
+| Pedestrian LED | 46 |
+| Pedestrian Button | 49 |
+| Emergency Interrupt Button | 2 |
 
 ---
 
-## System Logic
+# Project Structure
 
-The system cycles through these states:
-
-1. **North–South Green** → 7 seconds  
-2. **North–South Yellow** → 3 seconds  
-3. **All Red** → 1 second 
-4. **East–West Green** → 7 seconds  
-5. **East–West Yellow** → 3 seconds  
-6. **All Red** → 1 seconds  
-7. *(If pedestrian button pressed)* → Pedestrian phase (7 seconds)
-
-**Emergency mode:**  
-When the emergency button is pressed, the controller interrupts normal operation and enters a **flashing all-red state** until the button is pressed again.
+```text
+traffic_light_controller.ino
+README.md
+/media
+```
 
 ---
 
-## Code Highlights
+# Future Improvements
 
-- Uses `millis()` for **non-blocking timing**  
-- Implements a **finite state machine** for clean, modular logic  
-- Handles asynchronous inputs (pedestrian + interrupt) safely  
-- Uses **debouncing** and **volatile flags** for reliable input detection  
-
----
-
-## How to Use
-
-1. Wire the circuit following the pin layout above.  
-2. Open the `.ino` file in the **Arduino IDE**.  
-3. Select your board: **Arduino Mega 2560**.  
-4. Upload the code to your board.  
-5. Press the **pedestrian button** to activate the crossing phase.  
-6. Press the **emergency button** to toggle flashing all-red mode.  
+* Add pedestrian countdown display
+* Implement adaptive traffic timing using sensors
+* Add UART/Bluetooth remote monitoring
+* Port firmware to STM32 hardware
+* Design a custom PCB for signal control circuitry
 
 ---
 
-## Future Improvements
+# Author
 
-- Add seven-segment countdown timer for pedestrian crossing  
-- Include ultrasonic sensors for traffic density simulation  
-- Add Bluetooth or Wi-Fi module for remote monitoring  
-- Display state transitions on an LCD
+Trevor Fune
