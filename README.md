@@ -178,16 +178,6 @@ When activated:
 
 ---
 
-# Project Structure
-
-```text
-traffic_light_controller.ino
-README.md
-/media
-```
-
----
-
 # Future Improvements
 
 * Add pedestrian countdown display
